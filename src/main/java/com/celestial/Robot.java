@@ -1,5 +1,6 @@
 package com.celestial;
 
+import com.celestial.subsystems.ElevatorSubsystem;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.PIDController;
@@ -37,6 +38,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
+        robotContainer.elevatorSubsystem.resetPID();
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (autonomousCommand != null)
@@ -52,6 +54,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
+        robotContainer.elevatorSubsystem.resetPID();
         if (autonomousCommand != null)
         {
             autonomousCommand.cancel();

@@ -11,8 +11,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.NetworkTableEvent;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.EnumSet;
 
 public class SwerveModule {
     private final SparkMax driveMotor;
@@ -27,10 +33,16 @@ public class SwerveModule {
 
     private PIDController turningPidController;
 
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    DoubleTopic pTopic = inst.getDoubleTopic("swerveP");
+    DoubleTopic dTopic = inst.getDoubleTopic("swerveD");
+
+    DoubleSubscriber pSubscriber = pTopic.subscribe(0);
+    DoubleSubscriber dSubscriber = dTopic.subscribe(0);
+
     public SwerveModule(int driveMotorId, int rotationMotorId, boolean driveMotorReversed, boolean rotationMotorReversed, int absoluteEncoderChannel, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
         driveMotor = new SparkMax(driveMotorId, SparkLowLevel.MotorType.kBrushless);
         rotationMotor = new SparkMax(rotationMotorId, SparkLowLevel.MotorType.kBrushless);
-
 
         turningPidController = new PIDController(Constants.ModuleConstants.kPRotation, 0, Constants.ModuleConstants.kDRotation);
 
@@ -60,8 +72,26 @@ public class SwerveModule {
         turningPidController.enableContinuousInput(-Math.PI, Math.PI);
 
         resetEncoders();
-    }
 
+        pTopic.publish().set(0);
+        dTopic.publish().set(0);
+
+        inst.addListener(
+                pSubscriber,
+                EnumSet.of(NetworkTableEvent.Kind.kValueAll),
+                event -> {
+                    System.out.println("Change");
+                    turningPidController = new PIDController(pSubscriber.get(), 0, dSubscriber.get());
+                });
+
+        inst.addListener(
+                dSubscriber,
+                EnumSet.of(NetworkTableEvent.Kind.kValueAll),
+                event -> {
+                    System.out.println("Change");
+                    turningPidController = new PIDController(pSubscriber.get(), 0, dSubscriber.get());
+                });
+    }
 
     public double getDrivePosition() {
         return driveEncoder.getPosition();
@@ -100,7 +130,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState state) {
-        if (Math.abs(state.speedMetersPerSecond) < 0.04) {
+        if (Math.abs(state.speedMetersPerSecond) < 0.05) {
             stop();
             return;
         }

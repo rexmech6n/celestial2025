@@ -2,14 +2,16 @@ package com.celestial.subsystems;
 
 import com.celestial.Constants.DriveConstants;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -66,6 +68,7 @@ public class SwerveSubsystem extends SubsystemBase
     StructArrayPublisher<SwerveModuleState> publisher = inst.getDefault()
             .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
 
+
     public SwerveSubsystem() {
         new Thread(() -> {
             try {
@@ -74,6 +77,38 @@ public class SwerveSubsystem extends SubsystemBase
             } catch (Exception e) {
             }
         }).start();
+
+        RobotConfig config = null;
+        try{
+            config = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+        }
+
+        AutoBuilder.configure(
+                this::getPose,
+                this::resetOdometry,
+                () -> DriveConstants.kDriveKinematics.toChassisSpeeds(getSwerveModuleStates()),
+                this::driveRelative,
+                new PPHolonomicDriveController(
+                        new PIDConstants(25.0, 0.0, 0.0), // Translation PID constants
+                        new PIDConstants(1.0, 0.0, 0.0) // Rotation PID constants
+                ),
+                config,
+                () -> {
+
+
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                this
+        );
+
+
     }
 
     public void zeroHeading() {
@@ -120,8 +155,11 @@ public class SwerveSubsystem extends SubsystemBase
         field.setRobotPose(odometer.getPoseMeters());
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putData("Field", field);
-
         SmartDashboard.putNumber("Front Left Absolute", Units.radiansToDegrees(frontLeft.getAbsoluteEncoderRad()));
+        SmartDashboard.putNumber("Front Left Drive", frontLeft.getDrivePosition());
+        SmartDashboard.putNumber("Front Right Drive", frontRight.getDrivePosition());
+        SmartDashboard.putNumber("Back Left Drive", backLeft.getDrivePosition());
+        SmartDashboard.putNumber("Back Right Drive", backRight.getDrivePosition());
 
         SmartDashboard.putNumber("Back Left Absolute", Units.radiansToDegrees(backLeft.getAbsoluteEncoderRad()));
 
@@ -145,5 +183,12 @@ public class SwerveSubsystem extends SubsystemBase
         frontRight.setDesiredState(desiredStates[1]);
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
+    }
+
+    public void driveRelative(ChassisSpeeds speeds) {
+        ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+        SwerveModuleState[] setpointStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(discreteSpeeds);
+
+        setModuleStates(setpointStates);
     }
 }

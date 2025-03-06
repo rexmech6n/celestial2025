@@ -24,6 +24,26 @@ public final class Constants
         public static final int DRIVER_CONTROLLER_PORT = 0;
     }
 
+    public static final class CoralIntakeConstants {
+        public static final int kMotorPort = 12;
+    }
+
+    public static final class AlgaeIntakeConstants {
+        public static final int kMotorPort = 11;
+    }
+
+    public static final class ElevatorConstants {
+        public static final int kMasterMotorPort = 9;
+        public static final int kSlaveMotorPort = 10;
+        public static final double kP = 0.15;
+        public static final double kI = 0.0;
+        public static final double kD = 0;
+        public static final int kEncoderRot2Meter = 1;
+        public static final int kEncoderRPM2MeterPerSecond = 1;
+        public static final double kElevatorGearing = 21.064123994;
+        public static final double kElevatorDrumRadius = 1.5288; // centimeters
+    }
+
     public static final class ModuleConstants {
         public static final double kDriveMotorGearRatio = 1 / 5.54;
         public static final double kRotationMotorGearRatio = 1 / 25.0;
@@ -32,15 +52,15 @@ public final class Constants
         public static final double kRotationEncoderRot2Rad = kRotationMotorGearRatio * 2 * Math.PI;
         public static final double kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60;
         public static final double kRotationEncoderRPM2RadPerSec = kRotationEncoderRot2Rad / 60;
-        public static final double kPRotation = 0.7;
+        public static final double kPRotation = 0.6;
         public static final double kDRotation = 0.008;
     }
 
     public static final class DriveConstants {
-        public static final double kTrackWidth = 0.59;
+        public static final double kTrackWidth = 0.57;
 
         // Distance between right and left wheels
-        public static final double kWheelBase = 0.59;
+        public static final double kWheelBase = 0.57;
 
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
                 new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -48,29 +68,29 @@ public final class Constants
                 new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
                 new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final int kFrontLeftDriveMotorPort = 4;
-        public static final int kBackLeftDriveMotorPort = 3;
-        public static final int kFrontRightDriveMotorPort = 16;
-        public static final int kBackRightDriveMotorPort = 10;
+        public static final int kFrontLeftDriveMotorPort = 6;
+        public static final int kBackLeftDriveMotorPort = 8;
+        public static final int kFrontRightDriveMotorPort = 4;
+        public static final int kBackRightDriveMotorPort = 2;
 
-        public static final int kFrontLeftRotationMotorPort = 1;
-        public static final int kBackLeftRotationMotorPort = 19;
-        public static final int kFrontRightRotationMotorPort = 2;
-        public static final int kBackRightRotationMotorPort = 14;
+        public static final int kFrontLeftRotationMotorPort = 5;
+        public static final int kBackLeftRotationMotorPort = 7;
+        public static final int kFrontRightRotationMotorPort = 3;
+        public static final int kBackRightRotationMotorPort = 1;
 
         public static final boolean kFrontLeftRotationReversed = false;
         public static final boolean kBackLeftRotationReversed = false;
         public static final boolean kFrontRightRotationReversed = false;
         public static final boolean kBackRightRotationReversed = false;
 
-        public static final boolean kFrontLeftDriveReversed = true;
+        public static final boolean kFrontLeftDriveReversed = false;
         public static final boolean kBackLeftDriveReversed = true;
-        public static final boolean kFrontRightDriveReversed = true;
-        public static final boolean kBackRightDriveReversed = true;
+        public static final boolean kFrontRightDriveReversed = false;
+        public static final boolean kBackRightDriveReversed = false;
 
-        public static final int kFrontLeftAbsoluteEncoderPort = 3;
-        public static final int kBackLeftAbsoluteEncoderPort = 1;
-        public static final int kFrontRightAbsoluteEncoderPort = 2;
+        public static final int kFrontLeftAbsoluteEncoderPort = 2;
+        public static final int kBackLeftAbsoluteEncoderPort = 3;
+        public static final int kFrontRightAbsoluteEncoderPort = 1;
         public static final int kBackRightAbsoluteEncoderPort = 0;
 
         public static final boolean kFrontLeftAbsoluteEncoderReversed = false;
@@ -78,10 +98,10 @@ public final class Constants
         public static final boolean kFrontRightAbsoluteEncoderReversed = false;
         public static final boolean kBackRightAbsoluteEncoderReversed = false;
 
-        public static final double kFrontLeftAbsoluteEncoderOffsetRad = Units.degreesToRadians(222);
-        public static final double kBackLeftAbsoluteEncoderOffsetRad = Units.degreesToRadians(81);
-        public static final double kFrontRightAbsoluteEncoderOffsetRad = Units.degreesToRadians(141.2);
-        public static final double kBackRightAbsoluteEncoderOffsetRad = Units.degreesToRadians(112);
+        public static final double kFrontLeftAbsoluteEncoderOffsetRad = Units.degreesToRadians(292);
+        public static final double kBackLeftAbsoluteEncoderOffsetRad = Units.degreesToRadians(311);
+        public static final double kFrontRightAbsoluteEncoderOffsetRad = Units.degreesToRadians(138.2);
+        public static final double kBackRightAbsoluteEncoderOffsetRad = Units.degreesToRadians(355);
 
         public static final double kPhysicalMaxSpeedMetersPerSecond = 5.57;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
@@ -100,6 +120,6 @@ public final class Constants
         public static final int kDriverRotAxis = 2;
         public static final int kDriverFieldOrientedButtonIdx = 1;
 
-        public static final double kDeadband = 0.025;
+        public static final double kDeadband = 0.1;
     }
 }

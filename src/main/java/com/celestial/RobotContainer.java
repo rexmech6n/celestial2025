@@ -6,14 +6,21 @@
 package com.celestial;
 
 import com.celestial.Constants.OperatorConstants;
+import com.celestial.commands.CoralIntakeRollerCommand;
+import com.celestial.commands.AlgaeIntakeRollerCommand;
 import com.celestial.commands.SwerveJoystickCommand;
+import com.celestial.subsystems.AlgaeIntakeSubsystem;
+import com.celestial.subsystems.CoralIntakeSubsystem;
+import com.celestial.subsystems.ElevatorSubsystem;
 import com.celestial.subsystems.SwerveSubsystem;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
 
 
 /**
@@ -24,24 +31,55 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer
 {
-    // The robot's subsystems and commands are defined here...
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-    
-    // Replace with CommandPS4Controller or CommandJoystick if needed
-    private final CommandXboxController commandController =
-            new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
+    public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    private final CoralIntakeSubsystem coralIntakeSubsystem = new CoralIntakeSubsystem();
+    private final AlgaeIntakeSubsystem algaeIntakeSubsystem = new AlgaeIntakeSubsystem();
 
-    private final XboxController controller = new XboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
-    
-    
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    private final CommandPS4Controller commandController =
+            new CommandPS4Controller(OperatorConstants.DRIVER_CONTROLLER_PORT);
+
+    private final PS4Controller controller = new PS4Controller(OperatorConstants.DRIVER_CONTROLLER_PORT);
+
+    private final SendableChooser<Command> autoChooser;
+
     public RobotContainer()
     {
-        // Configure the trigger bindings
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        elevatorSubsystem.setSafetyDependencySupplier(
+                () -> !coralIntakeSubsystem.getIsCoralDetected()
+        );
+
         configureBindings();
     }
-    
-    
+
+
+    private int currentHeightIndex = 0;
+
+    private double getNextElevatorHeight(int indexIncrement) {
+        double[] heights = {1.0, 25.0, 50.0, 70.0};
+        int newIndex = indexIncrement + currentHeightIndex;
+        System.out.println(newIndex);
+        if(newIndex < 0) {
+            currentHeightIndex = 0;
+           return heights[0];
+        }
+        if(newIndex >= heights.length) {
+            currentHeightIndex = heights.length -1;
+            return heights[heights.length - 1];
+        }
+
+        currentHeightIndex = newIndex;
+        return heights[newIndex];
+    }
+
+
+    private boolean ejection = true;
+    private boolean nextEjection = false;
+
     /**
      * Use this method to define your trigger->command mappings. Triggers can be created via the
      * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -53,22 +91,55 @@ public class RobotContainer
      */
     private void configureBindings()
     {
+
         swerveSubsystem.setDefaultCommand(new SwerveJoystickCommand(
                 swerveSubsystem,
-                () -> controller.getRawAxis(Constants.OIConstants.kDriverYAxis),
-                () -> controller.getRawAxis(Constants.OIConstants.kDriverXAxis),
-                () -> controller.getRawAxis(Constants.OIConstants.kDriverRotAxis),
-                () -> !controller.getLeftBumperButton()));
+                () -> controller.getLeftY(),
+                () -> controller.getLeftX(),
+                () -> controller.getRightX(),
+                () -> !controller.getL2Button()));
+
+        commandController.L1().onTrue(
+                elevatorSubsystem.moveElevatorCommand(10.0)
+        );
+
+        commandController.povUp().onTrue(
+                elevatorSubsystem.moveElevatorCommand(74.5)
+        );
+
+        commandController.povDown().onTrue(
+                elevatorSubsystem.moveElevatorCommand(0)
+        );
+
+        commandController.povLeft().onTrue(
+                elevatorSubsystem.moveElevatorCommand(50.0)
+        );
+
+        commandController.povRight().onTrue(
+                elevatorSubsystem.moveElevatorCommand(25.0)
+        );
+
+        commandController.R1().whileTrue(
+                new CoralIntakeRollerCommand(coralIntakeSubsystem, 0.4)
+        );
+
+        commandController.cross().onTrue(
+                new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> 0.2, null)
+        );
+
+        commandController.triangle().onTrue(
+                new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> -0.4, () -> 0.2)
+        );
     }
-    
+
+
     
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand()
-    {
-        return null;
+    public Command getAutonomousCommand() {
+        return autoChooser.getSelected();
     }
 }
