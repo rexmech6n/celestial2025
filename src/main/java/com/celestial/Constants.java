@@ -98,9 +98,9 @@ public final class Constants
         public static final boolean kFrontRightAbsoluteEncoderReversed = false;
         public static final boolean kBackRightAbsoluteEncoderReversed = false;
 
-        public static final double kFrontLeftAbsoluteEncoderOffsetRad = Units.degreesToRadians(292);
+        public static final double kFrontLeftAbsoluteEncoderOffsetRad = Units.degreesToRadians(53);
         public static final double kBackLeftAbsoluteEncoderOffsetRad = Units.degreesToRadians(311);
-        public static final double kFrontRightAbsoluteEncoderOffsetRad = Units.degreesToRadians(138.2);
+        public static final double kFrontRightAbsoluteEncoderOffsetRad = Units.degreesToRadians(199.2);
         public static final double kBackRightAbsoluteEncoderOffsetRad = Units.degreesToRadians(355);
 
         public static final double kPhysicalMaxSpeedMetersPerSecond = 5.57;

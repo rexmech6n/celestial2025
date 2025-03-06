@@ -104,19 +104,19 @@ public class RobotContainer
         );
 
         commandController.povUp().onTrue(
-                elevatorSubsystem.moveElevatorCommand(74.5)
+                elevatorSubsystem.moveElevatorCommand(74.5) // L4
         );
 
         commandController.povDown().onTrue(
-                elevatorSubsystem.moveElevatorCommand(0)
+                elevatorSubsystem.moveElevatorCommand(6.0) // L1
         );
 
         commandController.povLeft().onTrue(
-                elevatorSubsystem.moveElevatorCommand(50.0)
+                elevatorSubsystem.moveElevatorCommand(16.5) // L2
         );
 
         commandController.povRight().onTrue(
-                elevatorSubsystem.moveElevatorCommand(25.0)
+                elevatorSubsystem.moveElevatorCommand(36.5) // L3
         );
 
         commandController.R1().whileTrue(
