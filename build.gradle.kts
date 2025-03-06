@@ -9,6 +9,7 @@ plugins {
     java
     id("edu.wpi.first.GradleRIO") version "2025.2.1"
     idea
+    kotlin("jvm")
 }
 
 
@@ -99,6 +100,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 java {
