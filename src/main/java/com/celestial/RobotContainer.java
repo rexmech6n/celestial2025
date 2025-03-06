@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer
 {
-    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    public final static SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
     public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final CoralIntakeSubsystem coralIntakeSubsystem = new CoralIntakeSubsystem();
     private final AlgaeIntakeSubsystem algaeIntakeSubsystem = new AlgaeIntakeSubsystem();
