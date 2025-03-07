@@ -56,7 +56,7 @@ public class RobotContainer
         NamedCommands.registerCommand("ElevatorAlgae", elevatorSubsystem.moveElevatorCommand(() -> 10.0));
         NamedCommands.registerCommand("TakeAlgae", algaeIntakeSubsystem.setSpeedCommand(0.2));
         NamedCommands.registerCommand("DropAlgae", algaeIntakeSubsystem.setSpeedCommand(0.0));
-        
+
         configureBindings();
     }
 
@@ -140,7 +140,7 @@ public class RobotContainer
         );
 
         commandController.R2().whileTrue(
-                new CoralIntakeRollerCommand(coralIntakeSubsystem, -0.4)
+                climberSubsystem.controlClimberCommand(-0.3)
         );
 
         commandController.povLeft().whileTrue(
