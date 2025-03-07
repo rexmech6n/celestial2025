@@ -134,7 +134,7 @@ object AutoAlign {
     }
 
     fun ranged(d: Double): Double {
-        return min(0.8, d.absoluteValue / 2) * d.sign
+        return min(1.0, d.absoluteValue / 1.5) * d.sign
     }
 
     fun isAdjustmentDone(): Boolean {
