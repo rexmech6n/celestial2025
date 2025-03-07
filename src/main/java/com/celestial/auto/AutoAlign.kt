@@ -40,7 +40,7 @@ object AutoAlign {
     init {
         inst.addListener(
             pSubscriber,
-            EnumSet.of<NetworkTableEvent.Kind>(NetworkTableEvent.Kind.kValueAll)
+            EnumSet.of(NetworkTableEvent.Kind.kValueAll)
         ) { event: NetworkTableEvent? ->
             println("P Change")
             setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
@@ -48,7 +48,7 @@ object AutoAlign {
 
         inst.addListener(
             iSubscriber,
-            EnumSet.of<NetworkTableEvent.Kind>(NetworkTableEvent.Kind.kValueAll)
+            EnumSet.of(NetworkTableEvent.Kind.kValueAll)
         ) { event: NetworkTableEvent? ->
             println("I Change")
             setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
@@ -56,7 +56,7 @@ object AutoAlign {
 
         inst.addListener(
             dSubscriber,
-            EnumSet.of<NetworkTableEvent.Kind>(NetworkTableEvent.Kind.kValueAll)
+            EnumSet.of(NetworkTableEvent.Kind.kValueAll)
         ) { event: NetworkTableEvent? ->
             println("D Change")
             setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
@@ -76,35 +76,50 @@ object AutoAlign {
         registerTarget(cameraOutput)
         when(state) {
             AutoAlignState.IDLE -> {
+                adjustment = RelativeMarker.zero()
             }
             AutoAlignState.HORIZONTAL_ALIGN -> {
                 if(target == null) {
                     state = AutoAlignState.IDLE
                 }
                 adjustment = calculateHorizontalAdjustment()
+                if(xPidController.atSetpoint()) {
+                    //TODO
+                    //state = AutoAlignState.RAMMING
+                    //update()
+                }
             }
             AutoAlignState.RAMMING -> {
                 if(target == null) {
                     state = AutoAlignState.IDLE
                 }
                 adjustment = calculateRamAdjustment()
+                if(xPidController.atSetpoint()) {
+                    state = AutoAlignState.DONE
+                    update()
+                }
             }
             AutoAlignState.DONE -> {
                 if(target == null) {
                     state = AutoAlignState.IDLE
                 }
+                adjustment = RelativeMarker.zero()
             }
         }
         if(k % 20 == 0L) println("Adjustment: $adjustment")
         k++
     }
 
-    fun arm(): ChassisSpeeds {
-        return ChassisSpeeds(0.0, min(0.05, adjustment.x.absoluteValue) * 20 * 0.33 * adjustment.x.sign, 0.0)
+    fun arm() {
+        state = AutoAlignState.HORIZONTAL_ALIGN
+    }
+
+    fun disarm() {
+        state = AutoAlignState.IDLE
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(0.0, min(0.05, adjustment.x.absoluteValue) * 20 * 0.33 * adjustment.x.sign, 0.0)
+        return ChassisSpeeds(adjustment.y, adjustment.x, 0.0)
     }
 
     fun isAdjustmentDone(): Boolean {
