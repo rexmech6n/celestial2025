@@ -18,6 +18,12 @@ import kotlin.math.sign
 object AutoAlign {
     lateinit var cameraOutput: CameraOutput
     var target: Vector2D? = null
+        get() {
+            if(System.currentTimeMillis() - lastUpdate.time > 4000) {
+                field = null
+            }
+            return field
+        }
     var lastUpdate: Date = Date()
     var adjustment: RelativeMarker = RelativeMarker(0.0, 0.0)
     var k: Long = 0
@@ -123,7 +129,7 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(adjustment.y, adjustment.x, 0.0)
+        return ChassisSpeeds(ramPidController.calculate(adjustment.x, 0.0), xPidController.calculate(adjustment.x, 0.0), 0.0)
     }
 
     fun isAdjustmentDone(): Boolean {
