@@ -135,6 +135,10 @@ public class RobotContainer
         );
 
         commandController.R2().whileTrue(
+                new CoralIntakeRollerCommand(coralIntakeSubsystem, -0.4)
+        );
+
+        commandController.povLeft().whileTrue(
                 new AutoAlignCommand(swerveSubsystem)
         );
 
