@@ -9,7 +9,7 @@ object AutoAlignConfiguration {
     const val CAMERA_NAME = "Arducam_OV9281_USB_Camera"
     const val STAGE_MODE = true
 
-    const val ROBOT_CAMERA_HORIZONTAL_DISTANCE = 0.24
+    const val ROBOT_CAMERA_HORIZONTAL_DISTANCE = 0.26
     const val APRIL_TAG_REEF_HORIZONTAL_DISTANCE = 0.165
     const val ZERO = 0.0
 

@@ -57,10 +57,15 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic() {
         //CommandScheduler.getInstance().run();
-        AutoAlign.INSTANCE.actuate();
+        //AutoAlign.INSTANCE.actuate();
     }
-    
-    
+
+    @Override
+    public void autonomousExit() {
+        super.autonomousExit();
+        //AutoAlign.INSTANCE.deactuate();
+    }
+
     @Override
     public void teleopInit()
     {

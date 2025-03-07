@@ -9,6 +9,7 @@ import com.celestial.utils.camera.CameraOutput
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import java.util.*
 import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
@@ -30,8 +31,8 @@ object AutoAlign {
         k++
     }
 
-    fun actuate() {
-        RobotContainer.swerveSubsystem.setModuleStates(Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds(0.0, min(0.35, adjustment.x.absoluteValue * 2) * adjustment.x.sign, 0.0)))
+    fun generateChassisSpeeds(): ChassisSpeeds {
+        return ChassisSpeeds(0.0, min(0.05, adjustment.x.absoluteValue) * 20 * 0.33 * adjustment.x.sign, 0.0)
     }
 
     private fun calculateHorizontalAdjustment(): RelativeMarker {
