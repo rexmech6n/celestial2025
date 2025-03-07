@@ -86,9 +86,9 @@ object AutoAlign {
                 adjustment = RelativeMarker.zero()
             }
             AutoAlignState.HORIZONTAL_ALIGN -> {
-                if(target == null) {
+                /*if(target == null) {
                     state = AutoAlignState.IDLE
-                }
+                }*/
                 adjustment = calculateHorizontalAdjustment()
                 if(xPidController.atSetpoint()) {
                     //TODO
