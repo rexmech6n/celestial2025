@@ -130,11 +130,11 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(ranged(ramPidController.calculate(adjustment.y, 0.0)), ranged(xPidController.calculate(adjustment.x, 0.0)), 0.0)
+        return ChassisSpeeds(ranged(ramPidController.calculate(adjustment.y, 0.0)), -ranged(xPidController.calculate(adjustment.x, 0.0)), 0.0)
     }
 
     fun ranged(d: Double): Double {
-        return min(0.4, d.absoluteValue / 2.5) * d.sign
+        return min(0.8, d.absoluteValue / 2) * d.sign
     }
 
     fun isAdjustmentDone(): Boolean {
