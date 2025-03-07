@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.EnumSet;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.waitUntil;
@@ -163,10 +164,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         this.safetyDependencySupplier = safetyDependencySupplier;
     }
 
-    public Command moveElevatorCommand(double position) {
+    public Command moveElevatorCommand(DoubleSupplier positionSupplier) {
         return parallel(
                 runOnce(() -> {
-                    setDesiredPosition(position);
+                    setDesiredPosition(positionSupplier.getAsDouble());
                 }),
                 waitUntil(this::getAtDesiredPosition)
         );

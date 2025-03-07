@@ -6,13 +6,11 @@
 package com.celestial;
 
 import com.celestial.Constants.OperatorConstants;
+import com.celestial.commands.AutoAlignCommand;
 import com.celestial.commands.CoralIntakeRollerCommand;
 import com.celestial.commands.AlgaeIntakeRollerCommand;
 import com.celestial.commands.SwerveJoystickCommand;
-import com.celestial.subsystems.AlgaeIntakeSubsystem;
-import com.celestial.subsystems.CoralIntakeSubsystem;
-import com.celestial.subsystems.ElevatorSubsystem;
-import com.celestial.subsystems.SwerveSubsystem;
+import com.celestial.subsystems.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -35,6 +33,7 @@ public class RobotContainer
     public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final CoralIntakeSubsystem coralIntakeSubsystem = new CoralIntakeSubsystem();
     private final AlgaeIntakeSubsystem algaeIntakeSubsystem = new AlgaeIntakeSubsystem();
+    private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
     private final CommandPS4Controller commandController =
             new CommandPS4Controller(OperatorConstants.DRIVER_CONTROLLER_PORT);
@@ -60,20 +59,35 @@ public class RobotContainer
     private int currentHeightIndex = 0;
 
     private double getNextElevatorHeight(int indexIncrement) {
-        double[] heights = {1.0, 25.0, 50.0, 70.0};
+        double[] heights = {0.0, 6.0, 10.0, 16.5, 36.5, 74.5};
         int newIndex = indexIncrement + currentHeightIndex;
         System.out.println(newIndex);
+
         if(newIndex < 0) {
             currentHeightIndex = 0;
+            displayElevatorStage(0);
            return heights[0];
         }
         if(newIndex >= heights.length) {
             currentHeightIndex = heights.length -1;
+            displayElevatorStage(heights.length - 1);
             return heights[heights.length - 1];
         }
 
+        displayElevatorStage(newIndex);
+
         currentHeightIndex = newIndex;
         return heights[newIndex];
+    }
+
+    private void displayElevatorStage(int newIndex) {
+        String stage = newIndex == 0 ? "Home" :
+                newIndex == 1 ? "L1" :
+                        newIndex == 2 ? "Algae" :
+                                newIndex == 3 ? "L2" :
+                                        newIndex == 4 ? "L3" : "L4";
+
+        SmartDashboard.putString("Elevator Stage", stage);
     }
 
 
@@ -99,28 +113,33 @@ public class RobotContainer
                 () -> controller.getRightX(),
                 () -> !controller.getL2Button()));
 
-        commandController.L1().onTrue(
-                elevatorSubsystem.moveElevatorCommand(10.0)
-        );
 
         commandController.povUp().onTrue(
-                elevatorSubsystem.moveElevatorCommand(74.5) // L4
+                elevatorSubsystem.moveElevatorCommand(() -> getNextElevatorHeight(1)) // L4
         );
 
         commandController.povDown().onTrue(
-                elevatorSubsystem.moveElevatorCommand(6.0) // L1
+                elevatorSubsystem.moveElevatorCommand(() -> getNextElevatorHeight(-1)) // L1
         );
 
-        commandController.povLeft().onTrue(
+        /*commandController.povLeft().onTrue(
                 elevatorSubsystem.moveElevatorCommand(16.5) // L2
         );
 
         commandController.povRight().onTrue(
                 elevatorSubsystem.moveElevatorCommand(36.5) // L3
-        );
+        );*/
 
         commandController.R1().whileTrue(
                 new CoralIntakeRollerCommand(coralIntakeSubsystem, 0.4)
+        );
+
+        commandController.R2().whileTrue(
+                new AutoAlignCommand(swerveSubsystem)
+        );
+
+        commandController.L2().whileTrue(
+                climberSubsystem.controlClimberCommand(0.3)
         );
 
         commandController.square().onTrue(
