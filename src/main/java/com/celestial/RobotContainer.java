@@ -142,10 +142,6 @@ public class RobotContainer
                 climberSubsystem.controlClimberCommand(0.3)
         );
 
-        commandController.square().onTrue(
-                elevatorSubsystem.moveElevatorCommand(0.0)
-        );
-
         commandController.cross().onTrue(
                 new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> 0.2, null)
         );
