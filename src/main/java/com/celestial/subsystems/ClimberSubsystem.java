@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
-    private SparkMax climberMotor = new SparkMax(20, SparkLowLevel.MotorType.kBrushless);
+    private SparkMax climberMotor = new SparkMax(13, SparkLowLevel.MotorType.kBrushless);
 
     public ClimberSubsystem() {
         SparkMaxConfig config = new SparkMaxConfig();
