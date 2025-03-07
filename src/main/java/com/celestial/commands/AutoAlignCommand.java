@@ -16,6 +16,11 @@ public class AutoAlignCommand extends Command {
     }
 
     @Override
+    public void initialize() {
+        AutoAlign.INSTANCE.arm();
+    }
+
+    @Override
     public void execute() {
         ChassisSpeeds speeds = AutoAlign.INSTANCE.generateChassisSpeeds();
         SwerveModuleState[] states = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
@@ -27,6 +32,7 @@ public class AutoAlignCommand extends Command {
     public void end(boolean interrupted) {
         SwerveModuleState[] states = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0));
         swerveSubsystem.setModuleStates(states);
+        AutoAlign.INSTANCE.disarm();
     }
 
     @Override
