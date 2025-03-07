@@ -12,6 +12,7 @@ import com.celestial.commands.AlgaeIntakeRollerCommand;
 import com.celestial.commands.SwerveJoystickCommand;
 import com.celestial.subsystems.*;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,6 +53,10 @@ public class RobotContainer
                 () -> !coralIntakeSubsystem.getIsCoralDetected()
         );
 
+        NamedCommands.registerCommand("ElevatorAlgae", elevatorSubsystem.moveElevatorCommand(() -> 10.0));
+        NamedCommands.registerCommand("TakeAlgae", algaeIntakeSubsystem.setSpeedCommand(0.2));
+        NamedCommands.registerCommand("DropAlgae", algaeIntakeSubsystem.setSpeedCommand(0.0));
+        
         configureBindings();
     }
 

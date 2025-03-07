@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeIntakeSubsystem extends SubsystemBase {
@@ -19,6 +20,12 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
 
     public void setSpeed(double speed) {
         intakeMotor.set(speed);
+    }
+
+    public Command setSpeedCommand(double speed) {
+        return runOnce(() -> {
+            setSpeed(speed);
+        });
     }
 
 }
