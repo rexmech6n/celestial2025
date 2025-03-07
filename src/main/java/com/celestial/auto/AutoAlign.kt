@@ -143,7 +143,7 @@ object AutoAlign {
 
     private fun calculateHorizontalAdjustment(): RelativeMarker {
         return target?.let {
-            val distX = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripX() - Vector2D.x(it.x)
+            val distX = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripY() - Vector2D.x(it.x)
             RelativeMarker(distX)
         } ?: RelativeMarker.zero()
     }
