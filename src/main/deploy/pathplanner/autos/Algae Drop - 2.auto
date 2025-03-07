@@ -37,15 +37,21 @@
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "2 - Back"
+                        "name": "ElevatorHome"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 - Back"
           }
         },
         {

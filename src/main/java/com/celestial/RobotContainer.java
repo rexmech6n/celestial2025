@@ -53,18 +53,20 @@ public class RobotContainer
                 () -> !coralIntakeSubsystem.getIsCoralDetected()
         );
 
-        NamedCommands.registerCommand("ElevatorAlgae", elevatorSubsystem.moveElevatorCommand(() -> 10.0));
+        NamedCommands.registerCommand("ElevatorAlgae", elevatorSubsystem.moveElevatorCommand(() -> 34.0));
+        NamedCommands.registerCommand("ElevatorHome", elevatorSubsystem.moveElevatorCommand(() -> 0.0));
         NamedCommands.registerCommand("TakeAlgae", algaeIntakeSubsystem.setSpeedCommand(0.2));
         NamedCommands.registerCommand("DropAlgae", algaeIntakeSubsystem.setSpeedCommand(0.0));
 
         configureBindings();
+        SmartDashboard.putString("Elevator Stage", "Home");
     }
 
 
     private int currentHeightIndex = 0;
 
     private double getNextElevatorHeight(int indexIncrement) {
-        double[] heights = {0.0, 6.0, 10.0, 16.5, 36.5, 74.5};
+        double[] heights = {0.0, 5.0, 12.0, 23.0, 34, 43, 54, 74.5};
         int newIndex = indexIncrement + currentHeightIndex;
         System.out.println(newIndex);
 
@@ -87,10 +89,13 @@ public class RobotContainer
 
     private void displayElevatorStage(int newIndex) {
         String stage = newIndex == 0 ? "Home" :
-                newIndex == 1 ? "L1" :
-                        newIndex == 2 ? "Algae" :
-                                newIndex == 3 ? "L2" :
-                                        newIndex == 4 ? "L3" : "L4";
+                newIndex == 1 ? "Algae Put 1" :
+                newIndex == 2 ? "L1" :
+                newIndex == 3 ? "L2" :
+                newIndex == 4 ? "Algae Put 2" :
+                newIndex == 5 ? "L3" :
+                newIndex == 6 ? "Algae Put 3"
+                        : "L4";
 
         SmartDashboard.putString("Elevator Stage", stage);
     }
@@ -120,43 +125,59 @@ public class RobotContainer
 
 
         commandController.povUp().onTrue(
-                elevatorSubsystem.moveElevatorCommand(() -> getNextElevatorHeight(1)) // L4
+                elevatorSubsystem.moveElevatorCommand(() -> 74.5) // L4
         );
 
         commandController.povDown().onTrue(
-                elevatorSubsystem.moveElevatorCommand(() -> getNextElevatorHeight(-1)) // L1
+                elevatorSubsystem.moveElevatorCommand(() -> 0.0) // L1
         );
 
-        /*commandController.povLeft().onTrue(
-                elevatorSubsystem.moveElevatorCommand(16.5) // L2
+        commandController.povLeft().onTrue(
+                elevatorSubsystem.moveElevatorCommand(() -> 23) // L2
         );
 
         commandController.povRight().onTrue(
-                elevatorSubsystem.moveElevatorCommand(36.5) // L3
-        );*/
+                elevatorSubsystem.moveElevatorCommand(() -> 43) // L3
+        );
 
         commandController.R1().whileTrue(
                 new CoralIntakeRollerCommand(coralIntakeSubsystem, 0.4)
         );
 
-        commandController.R2().whileTrue(
+        commandController.L1().whileTrue(
+                coralIntakeSubsystem.setSpeedCommand(-0.2)
+        );
+
+        /*commandController.R2().whileTrue(
                 climberSubsystem.controlClimberCommand(-0.3)
-        );
+        );*/
 
-        commandController.povLeft().whileTrue(
-                new AutoAlignCommand(swerveSubsystem)
-        );
-
-        commandController.L2().whileTrue(
+        /*commandController.L2().whileTrue(
                 climberSubsystem.controlClimberCommand(0.3)
-        );
+        );*/
 
         commandController.cross().onTrue(
                 new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> 0.2, null)
         );
 
         commandController.triangle().onTrue(
-                new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> -0.4, () -> 0.2)
+                new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> -0.5, () -> 0.2)
+        );
+
+        commandController.square().onTrue(
+                elevatorSubsystem.moveElevatorCommand(() -> 34)
+        );
+
+        commandController.circle().onTrue(
+                elevatorSubsystem.moveElevatorCommand(() -> 54)
+        );
+
+        commandController.options().onTrue(
+                elevatorSubsystem.moveElevatorCommand(() -> 5.0)
+        );
+
+        commandController.share().whileTrue(
+                new AutoAlignCommand(swerveSubsystem)
         );
     }
 

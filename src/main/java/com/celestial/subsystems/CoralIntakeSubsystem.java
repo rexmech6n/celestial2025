@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
@@ -26,5 +27,15 @@ public class CoralIntakeSubsystem extends SubsystemBase {
 
     public void setSpeed(double speed) {
         intakeMotor.set(speed);
+    }
+
+    public Command setSpeedCommand(double speed) {
+        return run(
+                () -> {
+                    setSpeed(speed);
+                }
+        ).finallyDo(() -> {
+            setSpeed(0);
+        });
     }
 }
