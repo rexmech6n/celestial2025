@@ -50,13 +50,13 @@ public class Robot extends TimedRobot
 
         if (autonomousCommand != null)
         {
-            //autonomousCommand.schedule();
+            autonomousCommand.schedule();
         }
     }
 
     @Override
     public void autonomousPeriodic() {
-        //CommandScheduler.getInstance().run();
+        CommandScheduler.getInstance().run();
         //AutoAlign.INSTANCE.actuate();
     }
 
