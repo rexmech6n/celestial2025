@@ -112,10 +112,14 @@ object AutoAlign {
 
     fun arm() {
         state = AutoAlignState.HORIZONTAL_ALIGN
+        xPidController.reset()
+        ramPidController.reset()
     }
 
     fun disarm() {
         state = AutoAlignState.IDLE
+        xPidController.reset()
+        ramPidController.reset()
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
