@@ -99,6 +99,7 @@ public class Robot extends TimedRobot
         AutoAlign.INSTANCE.update();
         ChassisSpeeds cs = AutoAlign.INSTANCE.generateChassisSpeeds();
         SmartDashboard.putString("AutoAlign Adjustment", cs.vxMetersPerSecond + ", " + cs.vyMetersPerSecond);
+        if(i % 20 == 0) System.out.println("AutoAlign Adjustment: " + cs.vxMetersPerSecond + ", " + cs.vyMetersPerSecond);
         i++;
     }
 
