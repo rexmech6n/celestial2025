@@ -123,6 +123,10 @@ public class RobotContainer
                 new CoralIntakeRollerCommand(coralIntakeSubsystem, 0.4)
         );
 
+        commandController.square().onTrue(
+                elevatorSubsystem.moveElevatorCommand(0.0)
+        );
+
         commandController.cross().onTrue(
                 new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> 0.2, null)
         );
