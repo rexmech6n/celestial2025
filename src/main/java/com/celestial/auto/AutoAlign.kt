@@ -1,17 +1,17 @@
 package com.celestial.auto
 
-import com.celestial.Constants
-import com.celestial.RobotContainer
 import com.celestial.common.math.RelativeMarker
 import com.celestial.common.math.Vector2D
-import com.celestial.subsystems.SwerveSubsystem
 import com.celestial.utils.camera.CameraOutput
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.networktables.DoubleSubscriber
+import edu.wpi.first.networktables.DoubleTopic
+import edu.wpi.first.networktables.NetworkTableEvent
+import edu.wpi.first.networktables.NetworkTableInstance
 import java.util.*
 import kotlin.math.absoluteValue
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
@@ -26,6 +26,42 @@ object AutoAlign {
 
     var xPidController = PIDController(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
     var ramPidController = PIDController(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
+
+
+    var inst: NetworkTableInstance = NetworkTableInstance.getDefault()
+    var pTopic: DoubleTopic = inst.getDoubleTopic("align-P")
+    var iTopic: DoubleTopic = inst.getDoubleTopic("align-I")
+    var dTopic: DoubleTopic = inst.getDoubleTopic("align-D")
+
+    var pSubscriber: DoubleSubscriber = pTopic.subscribe(0.0)
+    var iSubscriber: DoubleSubscriber = iTopic.subscribe(0.0)
+    var dSubscriber: DoubleSubscriber = dTopic.subscribe(0.0)
+
+    init {
+        inst.addListener(
+            pSubscriber,
+            EnumSet.of<NetworkTableEvent.Kind>(NetworkTableEvent.Kind.kValueAll)
+        ) { event: NetworkTableEvent? ->
+            println("P Change")
+            setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
+        }
+
+        inst.addListener(
+            iSubscriber,
+            EnumSet.of<NetworkTableEvent.Kind>(NetworkTableEvent.Kind.kValueAll)
+        ) { event: NetworkTableEvent? ->
+            println("I Change")
+            setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
+        }
+
+        inst.addListener(
+            dSubscriber,
+            EnumSet.of<NetworkTableEvent.Kind>(NetworkTableEvent.Kind.kValueAll)
+        ) { event: NetworkTableEvent? ->
+            println("D Change")
+            setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
+        }
+    }
 
     fun setPidConstants(kP: Double, kI: Double, kD: Double) {
         xPidController = PIDController(kP, kI, kD)
