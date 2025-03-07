@@ -35,6 +35,10 @@ object AutoAlign {
         return ChassisSpeeds(0.0, min(0.05, adjustment.x.absoluteValue) * 20 * 0.33 * adjustment.x.sign, 0.0)
     }
 
+    fun isAdjustmentDone(): Boolean {
+        return false
+    }
+
     private fun calculateHorizontalAdjustment(): RelativeMarker {
         return target?.let {
             val distX = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripX() - Vector2D.x(it.x)
