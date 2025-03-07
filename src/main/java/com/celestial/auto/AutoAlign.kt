@@ -30,9 +30,8 @@ object AutoAlign {
 
     var state = AutoAlignState.IDLE
 
-    var xPidController = PIDController(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
-    var ramPidController = PIDController(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
-
+    lateinit var xPidController: PIDController
+    lateinit var ramPidController: PIDController
 
     var inst: NetworkTableInstance = NetworkTableInstance.getDefault()
     var pTopic: DoubleTopic = inst.getDoubleTopic("align-P")
@@ -67,6 +66,8 @@ object AutoAlign {
             println("D Change")
             setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
         }
+
+        setPidConstants(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
     }
 
     fun setPidConstants(kP: Double, kI: Double, kD: Double) {
@@ -129,7 +130,11 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(ramPidController.calculate(adjustment.x, 0.0), xPidController.calculate(adjustment.x, 0.0), 0.0)
+        return ChassisSpeeds(ranged(ramPidController.calculate(adjustment.y, 0.0)), ranged(xPidController.calculate(adjustment.x, 0.0)), 0.0)
+    }
+
+    fun ranged(d: Double): Double {
+        return min(1.0, d.absoluteValue) * d.sign
     }
 
     fun isAdjustmentDone(): Boolean {
