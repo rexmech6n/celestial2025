@@ -133,7 +133,7 @@ object AutoAlign {
     }
 
     fun isAdjustmentDone(): Boolean {
-        return false
+        return state == AutoAlignState.DONE
     }
 
     private fun calculateHorizontalAdjustment(): RelativeMarker {
