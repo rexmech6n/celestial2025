@@ -129,7 +129,7 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(adjustment.y, adjustment.x, 0.0)
+        return ChassisSpeeds(ramPidController.calculate(adjustment.x, 0.0), xPidController.calculate(adjustment.x, 0.0), 0.0)
     }
 
     fun isAdjustmentDone(): Boolean {

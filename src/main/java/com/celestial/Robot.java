@@ -5,6 +5,7 @@ import com.celestial.subsystems.ElevatorSubsystem;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -87,14 +88,26 @@ public class Robot extends TimedRobot
     {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+        AutoAlign.INSTANCE.arm();
     }
-    
+
+    private int i = 0;
     
     /** This method is called periodically during test mode. */
     @Override
-    public void testPeriodic() {}
-    
-    
+    public void testPeriodic() {
+        AutoAlign.INSTANCE.update();
+        ChassisSpeeds cs = AutoAlign.INSTANCE.generateChassisSpeeds();
+        SmartDashboard.putString("AutoAlign Adjustment", cs.vxMetersPerSecond + ", " + cs.vyMetersPerSecond);
+        i++;
+    }
+
+    @Override
+    public void teleopExit() {
+        super.teleopExit();
+        AutoAlign.INSTANCE.disarm();
+    }
+
     /** This method is called once when the robot is first started up. */
     @Override
     public void simulationInit() {}
