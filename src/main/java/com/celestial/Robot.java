@@ -1,5 +1,6 @@
 package com.celestial;
 
+import com.celestial.auto.AutoAlign;
 import com.celestial.subsystems.ElevatorSubsystem;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
@@ -20,12 +21,18 @@ public class Robot extends TimedRobot
     {
         robotContainer = new RobotContainer();
     }
-    
+
+    @Override
+    public void robotInit() {
+        super.robotInit();
+        AutoAlign.INSTANCE.init();
+    }
 
     @Override
     public void robotPeriodic()
     {
         CommandScheduler.getInstance().run();
+        AutoAlign.INSTANCE.update();
     }
 
     @Override
@@ -43,12 +50,15 @@ public class Robot extends TimedRobot
 
         if (autonomousCommand != null)
         {
-            autonomousCommand.schedule();
+            //autonomousCommand.schedule();
         }
     }
 
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        //CommandScheduler.getInstance().run();
+        AutoAlign.INSTANCE.actuate();
+    }
     
     
     @Override
