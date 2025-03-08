@@ -111,12 +111,15 @@ object AutoAlign {
     fun setPidConstants(kP: Double, kI: Double, kD: Double) {
         xPidController = PIDController(kP, kI, kD)
         ramPidController = PIDController(kP, kI, kD)
+        xPidController.setpoint = 0.0
         xPidController.setTolerance(0.02)
+        ramPidController.setpoint = 0.0
         ramPidController.setTolerance(0.02)
     }
 
     fun setThetaPidConstants(kP: Double, kI: Double, kD: Double) {
         thetaPidController = PIDController(kP, kI, kD)
+        thetaPidController.setpoint = 0.0
         thetaPidController.setTolerance(1.0)
     }
 
@@ -135,11 +138,11 @@ object AutoAlign {
                     state = AutoAlignState.IDLE
                 }*/
                 adjustment = calculateHorizontalAdjustment()
-                /*if(xPidController.atSetpoint()) {
+                if(xPidController.atSetpoint()) {
                     //TODO
                     state = AutoAlignState.RAMMING
                     update()
-                }*/
+                }
             }
             AutoAlignState.RAMMING -> {
                 if(target == null) {
