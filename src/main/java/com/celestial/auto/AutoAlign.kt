@@ -217,7 +217,7 @@ object AutoAlign {
     private fun calculateHorizontalAdjustment(): RelativeMarker {
         return target?.let {
             val distX = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripY() - Vector2D.x(it.x)
-            RelativeMarker(distX).withAzimuth(it.azimuth.absoluteValue - 180)
+            RelativeMarker(distX).withAzimuth((it.azimuth.absoluteValue - 180) * it.azimuth.sign)
         } ?: RelativeMarker.zero()
     }
 
