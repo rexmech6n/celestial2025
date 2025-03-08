@@ -120,7 +120,7 @@ object AutoAlign {
         xPidController = PIDController(kP, kI, kD)
         ramPidController = PIDController(kP, kI, kD)
         xPidController.setpoint = 0.0
-        xPidController.setTolerance(0.045)
+        xPidController.setTolerance(0.02)
         ramPidController.setpoint = 0.0
         ramPidController.setTolerance(0.02)
     }
@@ -149,19 +149,19 @@ object AutoAlign {
                     state = AutoAlignState.IDLE
                 }*/
                 adjustment = calculateHorizontalAdjustment()
-                if(xPidController.atSetpoint() && thetaPidController.atSetpoint()) {
+                if(xPidController.atSetpoint()) {
                     //TODO
                     println("xPid at setpoint")
-                    state = AutoAlignState.RAMMING
-                    update()
+                    //state = AutoAlignState.RAMMING
+                    //update()
                 }
             }
             AutoAlignState.RAMMING -> {
                 if(target == null) {
                     state = AutoAlignState.IDLE
                 }
-                adjustment = calculateRamAdjustment() + calculateHorizontalAdjustment()
-                if(ramPidController.atSetpoint()) {
+                adjustment = calculateRamAdjustment()
+                if(xPidController.atSetpoint()) {
                     state = AutoAlignState.DONE
                     update()
                 }
