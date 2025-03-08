@@ -128,7 +128,7 @@ object AutoAlign {
     fun setThetaPidConstants(kP: Double, kI: Double, kD: Double) {
         thetaPidController = PIDController(kP, kI, kD)
         thetaPidController.setpoint = 0.0
-        thetaPidController.setTolerance(1.0)
+        thetaPidController.setTolerance(4.0)
     }
 
     fun init() {
