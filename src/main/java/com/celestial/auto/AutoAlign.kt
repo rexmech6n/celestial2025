@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTableEvent
 import edu.wpi.first.networktables.NetworkTableInstance
 import java.util.*
 import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
@@ -188,7 +189,7 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)), -rangedTheta(
+        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)) * (max(0.05, min(0.3, adjustment.azimuth.absoluteValue)) - 0.05) * (1 / 0.3), -rangedTheta(
             toRadians(thetaPidController.calculate(adjustment.azimuth, 0.0))))
     }
 
