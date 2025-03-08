@@ -105,6 +105,12 @@ public class Robot extends TimedRobot
     }
 
     @Override
+    public void testExit() {
+        super.testExit();
+        AutoAlign.INSTANCE.disarm();
+    }
+
+    @Override
     public void teleopExit() {
         super.teleopExit();
         AutoAlign.INSTANCE.disarm();

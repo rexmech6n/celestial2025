@@ -102,10 +102,17 @@ object AutoAlign {
             setThetaPidConstants(thetaPSubscriber.get(), thetaISubscriber.get(), thetaDSubscriber.get())
         }
 
-
-
         setPidConstants(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
         setThetaPidConstants(AutoAlignConfiguration.AUTO_ALIGN_THETA_KP, AutoAlignConfiguration.AUTO_ALIGN_THETA_KI, AutoAlignConfiguration.AUTO_ALIGN_THETA_KD)
+
+
+        xpTopic.publish().set(AutoAlignConfiguration.AUTO_ALIGN_X_KP)
+        xiTopic.publish().set(AutoAlignConfiguration.AUTO_ALIGN_X_KI)
+        xdTopic.publish().set(AutoAlignConfiguration.AUTO_ALIGN_X_KD)
+        thetaPTopic.publish().set(AutoAlignConfiguration.AUTO_ALIGN_THETA_KP)
+        thetaITopic.publish().set(AutoAlignConfiguration.AUTO_ALIGN_THETA_KI)
+        thetaDTopic.publish().set(AutoAlignConfiguration.AUTO_ALIGN_THETA_KD)
+
     }
 
     fun setPidConstants(kP: Double, kI: Double, kD: Double) {
@@ -140,8 +147,8 @@ object AutoAlign {
                 adjustment = calculateHorizontalAdjustment()
                 if(xPidController.atSetpoint()) {
                     //TODO
-                    state = AutoAlignState.RAMMING
-                    update()
+                    //state = AutoAlignState.RAMMING
+                    //update()
                 }
             }
             AutoAlignState.RAMMING -> {
