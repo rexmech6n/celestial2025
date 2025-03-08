@@ -161,18 +161,13 @@ object AutoAlign {
                     state = AutoAlignState.IDLE
                 }*/
                 adjustment = calculateHorizontalAdjustment()
-                if (xPidController.atSetpoint()) {
-                    //TODO
-                    println("xPid at setpoint")
-                    //state = AutoAlignState.RAMMING
-                    //update()
+                if (xPidController.atSetpoint() && thetaPidController.atSetpoint()) {
+                    state = AutoAlignState.RAMMING
+                    update()
                 }
             }
 
             AutoAlignState.RAMMING -> {
-                if (target == null) {
-                    state = AutoAlignState.IDLE
-                }
                 adjustment = calculateRamAdjustment()
                 if (xPidController.atSetpoint()) {
                     state = AutoAlignState.DONE
@@ -225,7 +220,7 @@ object AutoAlign {
     }
 
     fun ranged(d: Double): Double {
-        return min(0.88, d.absoluteValue) * d.sign
+        return min(0.5, d.absoluteValue) * d.sign
     }
 
     fun rangedTheta(theta: Double): Double {
@@ -245,7 +240,7 @@ object AutoAlign {
 
     private fun calculateRamAdjustment(): RelativeMarker {
         return target?.let {
-            val dist = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripY() - Vector2D.y(it.y)
+            val dist = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripX() - Vector2D.y(it.y)
             RelativeMarker(dist)
         } ?: RelativeMarker.zero()
     }
