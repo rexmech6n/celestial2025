@@ -17,7 +17,7 @@ import kotlin.math.sign
 
 object AutoAlign {
     lateinit var cameraOutput: CameraOutput
-    var target: Vector2D? = null
+    var target: RelativeMarker? = null
         get() {
             if(System.currentTimeMillis() - lastUpdate.time > 4000) {
                 field = null
@@ -102,7 +102,7 @@ object AutoAlign {
                 if(xPidController.atSetpoint()) {
                     //TODO
                     state = AutoAlignState.RAMMING
-                    //update()
+                    update()
                 }
             }
             AutoAlignState.RAMMING -> {
@@ -116,9 +116,6 @@ object AutoAlign {
                 }
             }
             AutoAlignState.DONE -> {
-                if(target == null) {
-                    state = AutoAlignState.IDLE
-                }
                 adjustment = RelativeMarker.zero()
             }
         }
@@ -130,16 +127,19 @@ object AutoAlign {
         state = AutoAlignState.HORIZONTAL_ALIGN
         xPidController.reset()
         ramPidController.reset()
+        thetaPidController.reset()
     }
 
     fun disarm() {
         state = AutoAlignState.IDLE
         xPidController.reset()
         ramPidController.reset()
+        thetaPidController.reset()
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)), 0.0)
+        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)), rangedTheta(
+            thetaPidController.calculate(adjustment.azimuth, 0.0)))
     }
 
     fun rangedBoosted(d: Double): Double {
@@ -150,6 +150,10 @@ object AutoAlign {
         return min(0.88, d.absoluteValue) * d.sign
     }
 
+    fun rangedTheta(theta: Double): Double {
+        return min(12.0, theta.absoluteValue) * theta.sign
+    }
+
     fun isAdjustmentDone(): Boolean {
         return state == AutoAlignState.DONE
     }
@@ -157,7 +161,7 @@ object AutoAlign {
     private fun calculateHorizontalAdjustment(): RelativeMarker {
         return target?.let {
             val distX = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripY() - Vector2D.x(it.x)
-            RelativeMarker(distX)
+            RelativeMarker(distX).withAzimuth(it.azimuth.absoluteValue - 180)
         } ?: RelativeMarker.zero()
     }
 
@@ -170,8 +174,10 @@ object AutoAlign {
 
     private fun registerTarget(t: CameraOutput) {
         t.bestTarget?.takeIf { it.bestCameraToTarget != null && it.bestCameraToTarget.translation != null }?.also {
-            val translation3d = it.getBestCameraToTarget().translation
-            target = RelativeMarker(-translation3d.y, translation3d.x) + AutoAlignConfiguration.CAMERA_RELATIVE_MARKER
+            val cameraToBestTarget = it.getBestCameraToTarget()
+            val translation3d = cameraToBestTarget.translation
+            val rotation3d = cameraToBestTarget.rotation
+            target = RelativeMarker(-translation3d.y, translation3d.x, rotation3d.z) + AutoAlignConfiguration.CAMERA_RELATIVE_MARKER
             lastUpdate = Date()
         }
     }
