@@ -149,7 +149,7 @@ object AutoAlign {
                     state = AutoAlignState.IDLE
                 }*/
                 adjustment = calculateHorizontalAdjustment()
-                if(adjustment.x.absoluteValue < 0.02 && adjustment.y.absoluteValue < 2) {
+                if(adjustment.x.absoluteValue < AutoAlignConfiguration.AUTO_ALIGN_X_THRESHOLD && adjustment.azimuth.absoluteValue < AutoAlignConfiguration.AUTO_ALIGN_AZIMUTH_THRESHOLD) {
                     //TODO
                     println("xPid at setpoint")
                     state = AutoAlignState.RAMMING
@@ -161,7 +161,8 @@ object AutoAlign {
                     state = AutoAlignState.IDLE
                 }
                 adjustment = calculateRamAdjustment()
-                if(adjustment.y < 0.1) {
+                if(adjustment.y < AutoAlignConfiguration.AUTO_ALIGN_RAM_THRESHOLD) {
+                    println("ramPid at setpoint")
                     state = AutoAlignState.DONE
                     update()
                 }
@@ -189,7 +190,7 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        println("adj azimuth=${adjustment.azimuth}")
+        if(k % 50 == 0L) println("adj azimuth=${adjustment.azimuth}")
         return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)) * ((20 - min(10.0, adjustment.azimuth.absoluteValue)) / 20), -rangedTheta(
             toRadians(thetaPidController.calculate(adjustment.azimuth, 0.0))))
     }

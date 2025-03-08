@@ -14,6 +14,10 @@ object AutoAlignConfiguration {
     const val APRIL_TAG_REEF_Y_DISTANCE = 0.5
     const val ZERO = 0.0
 
+    const val AUTO_ALIGN_X_THRESHOLD = 0.02
+    const val AUTO_ALIGN_AZIMUTH_THRESHOLD = 2
+    const val AUTO_ALIGN_RAM_THRESHOLD = 0.02
+
     const val AUTO_ALIGN_X_KP = 2.66
     const val AUTO_ALIGN_X_KI = 1.0
     const val AUTO_ALIGN_X_KD = 0.8
