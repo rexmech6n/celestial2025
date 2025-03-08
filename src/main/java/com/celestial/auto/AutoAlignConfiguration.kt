@@ -18,9 +18,9 @@ object AutoAlignConfiguration {
     const val AUTO_ALIGN_X_KI = 1.0
     const val AUTO_ALIGN_X_KD = 0.8
 
-    const val AUTO_ALIGN_THETA_KP = 1.0
-    const val AUTO_ALIGN_THETA_KI = 0.4
-    const val AUTO_ALIGN_THETA_KD = 0.5
+    const val AUTO_ALIGN_THETA_KP = 0.95
+    const val AUTO_ALIGN_THETA_KI = 0.0
+    const val AUTO_ALIGN_THETA_KD = 0.0
 
     val CAMERA_RELATIVE_MARKER = RelativeMarker(ROBOT_CAMERA_HORIZONTAL_DISTANCE, ZERO)
     val REEF_RELATIVE_MARKER = RelativeMarker(APRIL_TAG_REEF_HORIZONTAL_DISTANCE, APRIL_TAG_REEF_Y_DISTANCE)
