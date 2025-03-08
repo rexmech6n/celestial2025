@@ -169,7 +169,7 @@ object AutoAlign {
 
             AutoAlignState.RAMMING -> {
                 adjustment = calculateRamAdjustment()
-                if (xPidController.atSetpoint()) {
+                if (ramPidController.atSetpoint()) {
                     state = AutoAlignState.DONE
                     update()
                 }
@@ -216,7 +216,7 @@ object AutoAlign {
     }
 
     fun rangedBoosted(d: Double): Double {
-        return min(1.0, (d.absoluteValue / 1.33)) * d.sign
+        return min(1.0, (d.absoluteValue)) * d.sign
     }
 
     fun ranged(d: Double): Double {
