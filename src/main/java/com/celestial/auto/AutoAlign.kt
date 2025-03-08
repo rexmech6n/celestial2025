@@ -174,7 +174,7 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
-        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)), rangedTheta(
+        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)), -rangedTheta(
             toRadians(thetaPidController.calculate(adjustment.azimuth, 0.0))))
     }
 
