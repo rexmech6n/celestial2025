@@ -135,11 +135,11 @@ object AutoAlign {
                     state = AutoAlignState.IDLE
                 }*/
                 adjustment = calculateHorizontalAdjustment()
-                if(xPidController.atSetpoint()) {
+                /*if(xPidController.atSetpoint()) {
                     //TODO
                     state = AutoAlignState.RAMMING
                     update()
-                }
+                }*/
             }
             AutoAlignState.RAMMING -> {
                 if(target == null) {
