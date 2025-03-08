@@ -35,38 +35,73 @@ object AutoAlign {
     lateinit var thetaPidController: PIDController
 
     var inst: NetworkTableInstance = NetworkTableInstance.getDefault()
-    var pTopic: DoubleTopic = inst.getDoubleTopic("align-P")
-    var iTopic: DoubleTopic = inst.getDoubleTopic("align-I")
-    var dTopic: DoubleTopic = inst.getDoubleTopic("align-D")
+    var xpTopic: DoubleTopic = inst.getDoubleTopic("xRam-P")
+    var xiTopic: DoubleTopic = inst.getDoubleTopic("xRam-I")
+    var xdTopic: DoubleTopic = inst.getDoubleTopic("xRam-D")
 
-    var pSubscriber: DoubleSubscriber = pTopic.subscribe(0.0)
-    var iSubscriber: DoubleSubscriber = iTopic.subscribe(0.0)
-    var dSubscriber: DoubleSubscriber = dTopic.subscribe(0.0)
+    var xpSubscriber: DoubleSubscriber = xpTopic.subscribe(0.0)
+    var xiSubscriber: DoubleSubscriber = xiTopic.subscribe(0.0)
+    var xdSubscriber: DoubleSubscriber = xdTopic.subscribe(0.0)
+
+    var thetaPTopic: DoubleTopic = inst.getDoubleTopic("theta-P")
+    var thetaITopic: DoubleTopic = inst.getDoubleTopic("theta-I")
+    var thetaDTopic: DoubleTopic = inst.getDoubleTopic("theta-D")
+
+    var thetaPSubscriber: DoubleSubscriber = thetaPTopic.subscribe(0.0)
+    var thetaISubscriber: DoubleSubscriber = thetaITopic.subscribe(0.0)
+    var thetaDSubscriber: DoubleSubscriber = thetaDTopic.subscribe(0.0)
 
     init {
         inst.addListener(
-            pSubscriber,
+            xpSubscriber,
             EnumSet.of(NetworkTableEvent.Kind.kValueAll)
         ) { event: NetworkTableEvent? ->
             println("P Change")
-            setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
+            setPidConstants(xpSubscriber.get(), xiSubscriber.get(), xdSubscriber.get())
         }
 
         inst.addListener(
-            iSubscriber,
+            xiSubscriber,
             EnumSet.of(NetworkTableEvent.Kind.kValueAll)
         ) { event: NetworkTableEvent? ->
             println("I Change")
-            setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
+            setPidConstants(xpSubscriber.get(), xiSubscriber.get(), xdSubscriber.get())
         }
 
         inst.addListener(
-            dSubscriber,
+            xdSubscriber,
             EnumSet.of(NetworkTableEvent.Kind.kValueAll)
         ) { event: NetworkTableEvent? ->
             println("D Change")
-            setPidConstants(pSubscriber.get(), iSubscriber.get(), dSubscriber.get())
+            setPidConstants(xpSubscriber.get(), xiSubscriber.get(), xdSubscriber.get())
         }
+
+
+        inst.addListener(
+            thetaPTopic,
+            EnumSet.of(NetworkTableEvent.Kind.kValueAll)
+        ) { event: NetworkTableEvent? ->
+            println("P Change")
+            setThetaPidConstants(thetaPSubscriber.get(), thetaISubscriber.get(), thetaDSubscriber.get())
+        }
+
+        inst.addListener(
+            thetaITopic,
+            EnumSet.of(NetworkTableEvent.Kind.kValueAll)
+        ) { event: NetworkTableEvent? ->
+            println("I Change")
+            setThetaPidConstants(thetaPSubscriber.get(), thetaISubscriber.get(), thetaDSubscriber.get())
+        }
+
+        inst.addListener(
+            thetaDTopic,
+            EnumSet.of(NetworkTableEvent.Kind.kValueAll)
+        ) { event: NetworkTableEvent? ->
+            println("P Change")
+            setThetaPidConstants(thetaPSubscriber.get(), thetaISubscriber.get(), thetaDSubscriber.get())
+        }
+
+
 
         setPidConstants(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
         setThetaPidConstants(AutoAlignConfiguration.AUTO_ALIGN_THETA_KP, AutoAlignConfiguration.AUTO_ALIGN_THETA_KI, AutoAlignConfiguration.AUTO_ALIGN_THETA_KD)
