@@ -2,7 +2,6 @@ package com.celestial.auto
 
 import com.celestial.common.math.RelativeMarker
 import com.celestial.common.math.Vector2D
-import com.celestial.math.MovingAverage
 import com.celestial.utils.camera.CameraOutput
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
@@ -22,7 +21,7 @@ object AutoAlign {
     lateinit var cameraOutput: CameraOutput
     var target: RelativeMarker? = null
         get() {
-            if (System.currentTimeMillis() - lastUpdate.time > 2000) {
+            if(System.currentTimeMillis() - lastUpdate.time > 2000) {
                 field = null
             }
             return field
@@ -53,8 +52,6 @@ object AutoAlign {
     var thetaPSubscriber: DoubleSubscriber = thetaPTopic.subscribe(0.0)
     var thetaISubscriber: DoubleSubscriber = thetaITopic.subscribe(0.0)
     var thetaDSubscriber: DoubleSubscriber = thetaDTopic.subscribe(0.0)
-
-    val targetAzimuthMovingAverage = MovingAverage(10)
 
     init {
         inst.addListener(
@@ -106,16 +103,8 @@ object AutoAlign {
             setThetaPidConstants(thetaPSubscriber.get(), thetaISubscriber.get(), thetaDSubscriber.get())
         }
 
-        setPidConstants(
-            AutoAlignConfiguration.AUTO_ALIGN_X_KP,
-            AutoAlignConfiguration.AUTO_ALIGN_X_KI,
-            AutoAlignConfiguration.AUTO_ALIGN_X_KD
-        )
-        setThetaPidConstants(
-            AutoAlignConfiguration.AUTO_ALIGN_THETA_KP,
-            AutoAlignConfiguration.AUTO_ALIGN_THETA_KI,
-            AutoAlignConfiguration.AUTO_ALIGN_THETA_KD
-        )
+        setPidConstants(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
+        setThetaPidConstants(AutoAlignConfiguration.AUTO_ALIGN_THETA_KP, AutoAlignConfiguration.AUTO_ALIGN_THETA_KI, AutoAlignConfiguration.AUTO_ALIGN_THETA_KD)
 
 
         xpTopic.publish().set(AutoAlignConfiguration.AUTO_ALIGN_X_KP)
@@ -151,30 +140,32 @@ object AutoAlign {
         xPidController.calculate(adjustment.x)
         ramPidController.calculate(adjustment.y)
         thetaPidController.calculate(adjustment.azimuth)
-        when (state) {
+        when(state) {
             AutoAlignState.IDLE -> {
                 adjustment = RelativeMarker.zero()
             }
-
             AutoAlignState.HORIZONTAL_ALIGN -> {
                 /*if(target == null) {
                     state = AutoAlignState.IDLE
                 }*/
                 adjustment = calculateHorizontalAdjustment()
-                if (xPidController.atSetpoint() && thetaPidController.atSetpoint()) {
-                    state = AutoAlignState.RAMMING
-                    update()
+                if(xPidController.atSetpoint()) {
+                    //TODO
+                    println("xPid at setpoint")
+                    //state = AutoAlignState.RAMMING
+                    //update()
                 }
             }
-
             AutoAlignState.RAMMING -> {
+                if(target == null) {
+                    state = AutoAlignState.IDLE
+                }
                 adjustment = calculateRamAdjustment()
-                if (ramPidController.atSetpoint()) {
+                if(xPidController.atSetpoint()) {
                     state = AutoAlignState.DONE
                     update()
                 }
             }
-
             AutoAlignState.DONE -> {
                 adjustment = RelativeMarker.zero()
             }
@@ -199,16 +190,8 @@ object AutoAlign {
 
     fun generateChassisSpeeds(): ChassisSpeeds {
         println("adj azimuth=${adjustment.azimuth}")
-        return ChassisSpeeds(
-            -ranged(ramPidController.calculate(adjustment.y, 0.0)),
-            -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)) * ((20 - min(
-                10.0,
-                adjustment.azimuth.absoluteValue
-            )) / 20),
-            -rangedTheta(
-                toRadians(thetaPidController.calculate(adjustment.azimuth, 0.0))
-            )
-        )
+        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)) * ((10 - min(10.0, adjustment.azimuth.absoluteValue)) / 10), -rangedTheta(
+            toRadians(thetaPidController.calculate(adjustment.azimuth, 0.0))))
     }
 
     fun toRadians(d: Double): Double {
@@ -216,11 +199,11 @@ object AutoAlign {
     }
 
     fun rangedBoosted(d: Double): Double {
-        return min(1.0, (d.absoluteValue)) * d.sign
+        return min(1.0, (d.absoluteValue / 1.33)) * d.sign
     }
 
     fun ranged(d: Double): Double {
-        return min(0.5, d.absoluteValue) * d.sign
+        return min(0.88, d.absoluteValue) * d.sign
     }
 
     fun rangedTheta(theta: Double): Double {
@@ -240,7 +223,7 @@ object AutoAlign {
 
     private fun calculateRamAdjustment(): RelativeMarker {
         return target?.let {
-            val dist = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripX() - Vector2D.y(it.y)
+            val dist = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripY() - Vector2D.y(it.y)
             RelativeMarker(dist)
         } ?: RelativeMarker.zero()
     }
@@ -250,11 +233,7 @@ object AutoAlign {
             val cameraToBestTarget = it.getBestCameraToTarget()
             val translation3d = cameraToBestTarget.translation
             val rotation3d = cameraToBestTarget.rotation
-            target = RelativeMarker(
-                -translation3d.y,
-                translation3d.x,
-                targetAzimuthMovingAverage.with(Math.toDegrees(rotation3d.z.let { z -> (z.absoluteValue - 180) * z.sign }))
-            ) + AutoAlignConfiguration.CAMERA_RELATIVE_MARKER
+            target = RelativeMarker(-translation3d.y, translation3d.x, Math.toDegrees(rotation3d.z)) + AutoAlignConfiguration.CAMERA_RELATIVE_MARKER
             lastUpdate = Date()
         }
     }

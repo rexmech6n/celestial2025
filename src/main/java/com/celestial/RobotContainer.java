@@ -137,7 +137,7 @@ public class RobotContainer
         );
 
         commandController.povRight().onTrue(
-                elevatorSubsystem.moveElevatorCommand(() -> 43) // L3
+                elevatorSubsystem.moveElevatorCommand(() -> 45) // L3
         );
 
         commandController.R1().whileTrue(
@@ -148,13 +148,13 @@ public class RobotContainer
                 coralIntakeSubsystem.setSpeedCommand(-0.2)
         );
 
-        commandController.R2().whileTrue(
+        /*commandController.R2().whileTrue(
                 climberSubsystem.controlClimberCommand(-0.3)
         );
 
         commandController.L2().whileTrue(
                 climberSubsystem.controlClimberCommand(0.3)
-        );
+        );*/
 
         commandController.cross().onTrue(
                 new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> 0.2, null)
@@ -165,7 +165,7 @@ public class RobotContainer
         );
 
         commandController.square().onTrue(
-                elevatorSubsystem.moveElevatorCommand(() -> 34)
+                elevatorSubsystem.moveElevatorCommand(() -> 36)
         );
 
         commandController.circle().onTrue(

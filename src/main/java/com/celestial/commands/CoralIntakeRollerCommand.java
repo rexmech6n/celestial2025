@@ -42,11 +42,10 @@ public class CoralIntakeRollerCommand extends Command {
         double power = 0;
 
         if(stop) {
-            if(reverse) {
+
                 timer.start();
                 power = -0.15;
-            }
-            else power = 0.0;
+
         } else power = speed;
 
         coralIntakeSubsystem.setSpeed(power);
