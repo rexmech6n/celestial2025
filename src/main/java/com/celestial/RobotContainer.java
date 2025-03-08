@@ -148,13 +148,13 @@ public class RobotContainer
                 coralIntakeSubsystem.setSpeedCommand(-0.2)
         );
 
-        /*commandController.R2().whileTrue(
+        commandController.R2().whileTrue(
                 climberSubsystem.controlClimberCommand(-0.3)
-        );*/
+        );
 
-        /*commandController.L2().whileTrue(
+        commandController.L2().whileTrue(
                 climberSubsystem.controlClimberCommand(0.3)
-        );*/
+        );
 
         commandController.cross().onTrue(
                 new AlgaeIntakeRollerCommand(algaeIntakeSubsystem, () -> 0.2, null)
@@ -184,7 +184,7 @@ public class RobotContainer
 
     
     /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
+         * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */

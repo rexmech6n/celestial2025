@@ -113,7 +113,7 @@ object AutoAlign {
                 adjustment = RelativeMarker.zero()
             }
         }
-        if(k % 20 == 0L) println("Adjustment: $adjustment")
+        //if(k % 20 == 0L) println("Adjustment: $adjustment")
         k++
     }
 

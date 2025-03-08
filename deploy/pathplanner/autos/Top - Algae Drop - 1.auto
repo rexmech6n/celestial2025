@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Wall Side - 2"
+            "pathName": "Wall Side - 1"
           }
         },
         {
@@ -46,18 +46,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "2 - Back"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "DropAlgae"
           }
         }
       ]

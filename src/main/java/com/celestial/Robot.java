@@ -4,6 +4,7 @@ import com.celestial.auto.AutoAlign;
 import com.celestial.subsystems.ElevatorSubsystem;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogEncoder;
@@ -21,19 +22,17 @@ public class Robot extends TimedRobot
     public Robot()
     {
         robotContainer = new RobotContainer();
+        CameraServer.startAutomaticCapture();
     }
 
     @Override
     public void robotInit() {
-        super.robotInit();
-        AutoAlign.INSTANCE.init();
     }
 
     @Override
     public void robotPeriodic()
     {
         CommandScheduler.getInstance().run();
-        AutoAlign.INSTANCE.update();
     }
 
     @Override
@@ -58,13 +57,11 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic() {
         CommandScheduler.getInstance().run();
-        //AutoAlign.INSTANCE.actuate();
     }
 
     @Override
     public void autonomousExit() {
         super.autonomousExit();
-        //AutoAlign.INSTANCE.deactuate();
     }
 
     @Override
@@ -88,25 +85,16 @@ public class Robot extends TimedRobot
     {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
-        AutoAlign.INSTANCE.arm();
     }
 
-    private int i = 0;
-    
     /** This method is called periodically during test mode. */
     @Override
     public void testPeriodic() {
-        AutoAlign.INSTANCE.update();
-        ChassisSpeeds cs = AutoAlign.INSTANCE.generateChassisSpeeds();
-        SmartDashboard.putString("AutoAlign Adjustment", cs.vxMetersPerSecond + ", " + cs.vyMetersPerSecond);
-        if(i % 20 == 0) System.out.println("AutoAlign Adjustment: " + cs.vxMetersPerSecond + ", " + cs.vyMetersPerSecond);
-        i++;
     }
 
     @Override
     public void teleopExit() {
         super.teleopExit();
-        AutoAlign.INSTANCE.disarm();
     }
 
     /** This method is called once when the robot is first started up. */

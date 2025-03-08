@@ -85,7 +85,7 @@ public final class Constants
 
         public static final boolean kFrontLeftDriveReversed = false;
         public static final boolean kBackLeftDriveReversed = true;
-        public static final boolean kFrontRightDriveReversed = false;
+        public static final boolean kFrontRightDriveReversed = true;
         public static final boolean kBackRightDriveReversed = false;
 
         public static final int kFrontLeftAbsoluteEncoderPort = 2;
