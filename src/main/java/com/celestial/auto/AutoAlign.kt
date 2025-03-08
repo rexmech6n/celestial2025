@@ -136,6 +136,9 @@ object AutoAlign {
 
     fun update() {
         registerTarget(cameraOutput)
+        xPidController.calculate(adjustment.x)
+        ramPidController.calculate(adjustment.y)
+        thetaPidController.calculate(adjustment.azimuth)
         when(state) {
             AutoAlignState.IDLE -> {
                 adjustment = RelativeMarker.zero()
@@ -147,6 +150,7 @@ object AutoAlign {
                 adjustment = calculateHorizontalAdjustment()
                 if(xPidController.atSetpoint()) {
                     //TODO
+                    println("xPid at setpoint")
                     //state = AutoAlignState.RAMMING
                     //update()
                 }
