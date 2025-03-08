@@ -99,8 +99,8 @@ public class Robot extends TimedRobot
     @Override
     public void testPeriodic() {
         ChassisSpeeds cs = AutoAlign.INSTANCE.generateChassisSpeeds();
-        SmartDashboard.putString("AutoAlign Adjustment", cs.vxMetersPerSecond + ", " + cs.vyMetersPerSecond);
-        if(i % 20 == 0) System.out.println("AutoAlign Adjustment: " + cs.vxMetersPerSecond + ", " + cs.vyMetersPerSecond);
+        SmartDashboard.putString("AutoAlign Adjustment", "vx=" + cs.vxMetersPerSecond + ", vy=" + cs.vyMetersPerSecond + ", theta=" + cs.omegaRadiansPerSecond);
+        if(i % 20 == 0) System.out.println("AutoAlign Adjustment: vx=" + cs.vxMetersPerSecond + ", vy=" + cs.vyMetersPerSecond + ", theta=" + cs.omegaRadiansPerSecond);
         i++;
     }
 
