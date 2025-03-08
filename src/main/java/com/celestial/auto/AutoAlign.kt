@@ -231,7 +231,7 @@ object AutoAlign {
             val cameraToBestTarget = it.getBestCameraToTarget()
             val translation3d = cameraToBestTarget.translation
             val rotation3d = cameraToBestTarget.rotation
-            target = RelativeMarker(-translation3d.y, translation3d.x, rotation3d.z) + AutoAlignConfiguration.CAMERA_RELATIVE_MARKER
+            target = RelativeMarker(-translation3d.y, translation3d.x, Math.toDegrees(rotation3d.z)) + AutoAlignConfiguration.CAMERA_RELATIVE_MARKER
             lastUpdate = Date()
         }
     }
