@@ -32,6 +32,7 @@ object AutoAlign {
 
     lateinit var xPidController: PIDController
     lateinit var ramPidController: PIDController
+    lateinit var thetaPidController: PIDController
 
     var inst: NetworkTableInstance = NetworkTableInstance.getDefault()
     var pTopic: DoubleTopic = inst.getDoubleTopic("align-P")
@@ -68,11 +69,19 @@ object AutoAlign {
         }
 
         setPidConstants(AutoAlignConfiguration.AUTO_ALIGN_X_KP, AutoAlignConfiguration.AUTO_ALIGN_X_KI, AutoAlignConfiguration.AUTO_ALIGN_X_KD)
+        setThetaPidConstants(AutoAlignConfiguration.AUTO_ALIGN_THETA_KP, AutoAlignConfiguration.AUTO_ALIGN_THETA_KI, AutoAlignConfiguration.AUTO_ALIGN_THETA_KD)
     }
 
     fun setPidConstants(kP: Double, kI: Double, kD: Double) {
         xPidController = PIDController(kP, kI, kD)
         ramPidController = PIDController(kP, kI, kD)
+        xPidController.setTolerance(0.02)
+        ramPidController.setTolerance(0.02)
+    }
+
+    fun setThetaPidConstants(kP: Double, kI: Double, kD: Double) {
+        thetaPidController = PIDController(kP, kI, kD)
+        thetaPidController.setTolerance(1.0)
     }
 
     fun init() {
@@ -92,7 +101,7 @@ object AutoAlign {
                 adjustment = calculateHorizontalAdjustment()
                 if(xPidController.atSetpoint()) {
                     //TODO
-                    //state = AutoAlignState.RAMMING
+                    state = AutoAlignState.RAMMING
                     //update()
                 }
             }
@@ -134,7 +143,7 @@ object AutoAlign {
     }
 
     fun rangedBoosted(d: Double): Double {
-        return min(1.0, (d.absoluteValue / 1.33) + (if(d.absoluteValue > 0.05) 0.2 else 0.0)) * d.sign
+        return min(1.0, (d.absoluteValue / 1.33)) * d.sign
     }
 
     fun ranged(d: Double): Double {
