@@ -3,6 +3,7 @@ package com.celestial.auto
 import com.celestial.common.math.RelativeMarker
 import com.celestial.common.math.Vector2D
 import com.celestial.utils.camera.CameraOutput
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -139,7 +140,11 @@ object AutoAlign {
 
     fun generateChassisSpeeds(): ChassisSpeeds {
         return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)), rangedTheta(
-            thetaPidController.calculate(adjustment.azimuth, 0.0)))
+            toRadians(thetaPidController.calculate(adjustment.azimuth, 0.0))))
+    }
+
+    fun toRadians(d: Double): Double {
+        return Math.toRadians(d)
     }
 
     fun rangedBoosted(d: Double): Double {
