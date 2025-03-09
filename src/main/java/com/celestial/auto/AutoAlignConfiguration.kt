@@ -11,7 +11,7 @@ object AutoAlignConfiguration {
 
     const val ROBOT_CAMERA_HORIZONTAL_DISTANCE = 0.26
     const val APRIL_TAG_REEF_HORIZONTAL_DISTANCE = 0.165
-    const val APRIL_TAG_REEF_Y_DISTANCE = 0.36
+    const val APRIL_TAG_REEF_Y_DISTANCE = 0.35
     const val ZERO = 0.0
 
     const val AUTO_ALIGN_X_THRESHOLD = 0.015
@@ -20,7 +20,7 @@ object AutoAlignConfiguration {
 
     const val AUTO_ALIGN_X_KP = 2.66
     const val AUTO_ALIGN_X_KI = 1.3
-    const val AUTO_ALIGN_X_KD = 0.8
+    const val AUTO_ALIGN_X_KD = 1.0
 
     const val AUTO_ALIGN_RAM_KP = 2.66
     const val AUTO_ALIGN_RAM_KI = 0.2

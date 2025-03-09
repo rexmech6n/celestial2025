@@ -13,7 +13,38 @@
         {
           "type": "named",
           "data": {
-            "name": "ElevatorAlgae"
+            "name": "AlignToReef"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoForwardSlowly"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DropCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoBackFastly"
           }
         }
       ]

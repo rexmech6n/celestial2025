@@ -13,6 +13,7 @@ import com.celestial.commands.SwerveJoystickCommand;
 import com.celestial.subsystems.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -50,10 +51,45 @@ public class RobotContainer
         );
 
         NamedCommands.registerCommand("ElevatorAlgae", elevatorSubsystem.moveElevatorCommand(() -> 34.0));
+        NamedCommands.registerCommand("ElevatorCoral", elevatorSubsystem.moveElevatorCommand(() -> 45.0));
         NamedCommands.registerCommand("ElevatorHome", elevatorSubsystem.moveElevatorCommand(() -> 0.0));
+        NamedCommands.registerCommand("GoForwardSlowly", Commands.parallel(
+                Commands.run(
+                        () -> {
+                            ChassisSpeeds speeds = new ChassisSpeeds(0.2, 0, 0);
+                            swerveSubsystem.driveRelative(speeds);
+                        }
+                ).withTimeout(1.5)
+        ).finallyDo(
+                () -> {
+                    ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
+                    swerveSubsystem.driveRelative(speeds);
+                }
+        ));
+
+
+        NamedCommands.registerCommand("GoBackFastly", Commands.parallel(
+                Commands.run(
+                        () -> {
+                            ChassisSpeeds speeds = new ChassisSpeeds(-0.4, 0, 0);
+                            swerveSubsystem.driveRelative(speeds);
+                        }
+                ).withTimeout(1)
+        ).finallyDo(
+                () -> {
+                    ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
+                    swerveSubsystem.driveRelative(speeds);
+                }
+        ));
+
         NamedCommands.registerCommand("TakeAlgae", algaeIntakeSubsystem.setSpeedCommand(0.2));
         NamedCommands.registerCommand("DropAlgae", algaeIntakeSubsystem.setSpeedCommand(0.0));
+        NamedCommands.registerCommand("DropCoral", Commands.parallel(
+                Commands.runOnce(() -> coralIntakeSubsystem.setSpeed(0.4)),
+                Commands.waitSeconds(1.5)
+        ).finallyDo(() -> coralIntakeSubsystem.setSpeed(0)));
         NamedCommands.registerCommand("AlignToReef",  new AutoAlignCommand(swerveSubsystem));
+
 
         configureBindings();
         SmartDashboard.putString("Elevator Stage", "Home");
