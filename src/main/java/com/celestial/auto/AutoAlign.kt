@@ -30,6 +30,7 @@ object AutoAlign {
 
     var state = AutoAlignState.IDLE
 
+    var latch: Long = 0
     lateinit var xPidController: PIDController
     lateinit var ramPidController: PIDController
     lateinit var thetaPidController: PIDController
@@ -190,6 +191,7 @@ object AutoAlign {
     }
 
     fun arm() {
+        latch = System.currentTimeMillis()
         state = AutoAlignState.HORIZONTAL_ALIGN
         xPidController.reset()
         ramPidController.reset()
@@ -227,7 +229,7 @@ object AutoAlign {
     }
 
     fun isAdjustmentDone(): Boolean {
-        return state == AutoAlignState.DONE
+        return state == AutoAlignState.DONE || (target == null && System.currentTimeMillis() - latch > 2000)
     }
 
     private fun calculateHorizontalAdjustment(): RelativeMarker {
