@@ -45,10 +45,6 @@ public class RobotContainer
 
     public RobotContainer()
     {
-        autoChooser = AutoBuilder.buildAutoChooser();
-
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
         elevatorSubsystem.setSafetyDependencySupplier(
                 () -> !coralIntakeSubsystem.getIsCoralDetected()
         );
@@ -57,9 +53,14 @@ public class RobotContainer
         NamedCommands.registerCommand("ElevatorHome", elevatorSubsystem.moveElevatorCommand(() -> 0.0));
         NamedCommands.registerCommand("TakeAlgae", algaeIntakeSubsystem.setSpeedCommand(0.2));
         NamedCommands.registerCommand("DropAlgae", algaeIntakeSubsystem.setSpeedCommand(0.0));
+        NamedCommands.registerCommand("AlignToReef",  new AutoAlignCommand(swerveSubsystem));
 
         configureBindings();
         SmartDashboard.putString("Elevator Stage", "Home");
+
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
 
