@@ -19,15 +19,15 @@ object AutoAlignConfiguration {
     const val AUTO_ALIGN_RAM_THRESHOLD = 0.01
 
     const val AUTO_ALIGN_X_KP = 2.8
-    const val AUTO_ALIGN_X_KI = 1.3
+    const val AUTO_ALIGN_X_KI = 1.45
     const val AUTO_ALIGN_X_KD = 1.0
 
     const val AUTO_ALIGN_RAM_KP = 2.66
     const val AUTO_ALIGN_RAM_KI = 0.2
     const val AUTO_ALIGN_RAM_KD = 0.1
 
-    const val AUTO_ALIGN_THETA_KP = 0.95
-    const val AUTO_ALIGN_THETA_KI = 0.15
+    const val AUTO_ALIGN_THETA_KP = 1.0
+    const val AUTO_ALIGN_THETA_KI = 0.2
     const val AUTO_ALIGN_THETA_KD = 0.0
 
     val CAMERA_RELATIVE_MARKER = RelativeMarker(ROBOT_CAMERA_HORIZONTAL_DISTANCE, ZERO)
