@@ -19,7 +19,7 @@ object AutoAlign {
     lateinit var cameraOutput: CameraOutput
     var target: RelativeMarker? = null
         get() {
-            if(System.currentTimeMillis() - lastUpdate.time > 2000) {
+            if(System.currentTimeMillis() - lastUpdate.time > 1000) {
                 field = null
             }
             return field

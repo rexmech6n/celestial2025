@@ -18,7 +18,7 @@ object AutoAlignConfiguration {
     const val AUTO_ALIGN_AZIMUTH_THRESHOLD = 1
     const val AUTO_ALIGN_RAM_THRESHOLD = 0.01
 
-    const val AUTO_ALIGN_X_KP = 2.66
+    const val AUTO_ALIGN_X_KP = 2.8
     const val AUTO_ALIGN_X_KI = 1.3
     const val AUTO_ALIGN_X_KD = 1.0
 
