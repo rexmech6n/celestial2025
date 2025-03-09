@@ -3,17 +3,15 @@ package com.celestial.auto
 import com.celestial.common.math.RelativeMarker
 import com.celestial.common.math.Vector2D
 import com.celestial.utils.camera.CameraOutput
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.networktables.DoubleSubscriber
 import edu.wpi.first.networktables.DoubleTopic
 import edu.wpi.first.networktables.NetworkTableEvent
 import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import java.util.*
 import kotlin.math.absoluteValue
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
@@ -118,7 +116,7 @@ object AutoAlign {
 
     fun setPidConstants(kP: Double, kI: Double, kD: Double) {
         xPidController = PIDController(kP, kI, kD)
-        ramPidController = PIDController(kP, kI, kD)
+        ramPidController = PIDController(AutoAlignConfiguration.AUTO_ALIGN_RAM_KP, AutoAlignConfiguration.AUTO_ALIGN_RAM_KI, AutoAlignConfiguration.AUTO_ALIGN_RAM_KD)
         xPidController.setpoint = 0.0
         //xPidController.setTolerance(0.005)
         ramPidController.setpoint = 0.0
@@ -152,25 +150,33 @@ object AutoAlign {
                 if(adjustment.x.absoluteValue < AutoAlignConfiguration.AUTO_ALIGN_X_THRESHOLD && adjustment.azimuth.absoluteValue < AutoAlignConfiguration.AUTO_ALIGN_AZIMUTH_THRESHOLD) {
                     //TODO
                     println("xPid at setpoint")
+                    xPidController.reset()
+                    ramPidController.reset()
+                    thetaPidController.reset()
                     state = AutoAlignState.RAMMING
                     update()
                 }
             }
             AutoAlignState.RAMMING -> {
-                if(target == null) {
-                    state = AutoAlignState.IDLE
-                }
                 adjustment = calculateRamAdjustment()
-                if(adjustment.y < AutoAlignConfiguration.AUTO_ALIGN_RAM_THRESHOLD) {
+                if(adjustment.y.absoluteValue < AutoAlignConfiguration.AUTO_ALIGN_RAM_THRESHOLD) {
                     println("ramPid at setpoint")
+                    xPidController.reset()
+                    ramPidController.reset()
+                    thetaPidController.reset()
                     state = AutoAlignState.DONE
                     update()
                 }
             }
             AutoAlignState.DONE -> {
+                if (k % 20 == 0L) println("AutoAlignState: Done")
                 adjustment = RelativeMarker.zero()
             }
         }
+        if(k % 50 == 0L) println("state=${state}")
+
+        if (k % 20 == 0L) SmartDashboard.putString("AutoAlign Adjustment:", "adj.x=" + adjustment.x + ", adj.y=" + adjustment.y + ", adj.az=" + adjustment.azimuth)
+
         //if(k % 20 == 0L) println("Adjustment: $adjustment")
         k++
     }
@@ -190,8 +196,9 @@ object AutoAlign {
     }
 
     fun generateChassisSpeeds(): ChassisSpeeds {
+        if(state == AutoAlignState.DONE ) return ChassisSpeeds(0.0, 0.0, 0.0)
         if(k % 50 == 0L) println("adj azimuth=${adjustment.azimuth}")
-        return ChassisSpeeds(-ranged(ramPidController.calculate(adjustment.y, 0.0)), -rangedBoosted(xPidController.calculate(adjustment.x, 0.0)) * ((20 - min(10.0, adjustment.azimuth.absoluteValue)) / 20), -rangedTheta(
+        return ChassisSpeeds(ranged(ramPidController.calculate(adjustment.y, 0.0)), if(state == AutoAlignState.RAMMING) 0.0 else (-rangedBoosted(xPidController.calculate(adjustment.x, 0.0)) * ((20 - min(10.0, adjustment.azimuth.absoluteValue)) / 20)), -rangedTheta(
             toRadians(thetaPidController.calculate(adjustment.azimuth, 0.0))))
     }
 
@@ -224,7 +231,7 @@ object AutoAlign {
 
     private fun calculateRamAdjustment(): RelativeMarker {
         return target?.let {
-            val dist = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripY() - Vector2D.y(it.y)
+            val dist = AutoAlignConfiguration.REEF_RELATIVE_MARKER.stripX() - Vector2D.y(it.y)
             RelativeMarker(dist)
         } ?: RelativeMarker.zero()
     }
@@ -235,6 +242,7 @@ object AutoAlign {
             val translation3d = cameraToBestTarget.translation
             val rotation3d = cameraToBestTarget.rotation
             target = RelativeMarker(-translation3d.y, translation3d.x, Math.toDegrees(rotation3d.z)) + AutoAlignConfiguration.CAMERA_RELATIVE_MARKER
+            if (k % 20 == 0L) SmartDashboard.putString("Target:", "t.x=" + target?.x + ", t.y=" + target?.y + ", t.az=" + target?.azimuth)
             lastUpdate = Date()
         }
     }
