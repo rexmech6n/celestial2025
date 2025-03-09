@@ -50,6 +50,7 @@ public class RobotContainer
                 () -> !coralIntakeSubsystem.getIsCoralDetected()
         );
 
+        NamedCommands.registerCommand("InitialBerkay", elevatorSubsystem.moveElevatorCommand(() -> 34.0));
         NamedCommands.registerCommand("ElevatorAlgae", elevatorSubsystem.moveElevatorCommand(() -> 34.0));
         NamedCommands.registerCommand("ElevatorCoral", elevatorSubsystem.moveElevatorCommand(() -> 45.0));
         NamedCommands.registerCommand("ElevatorHome", elevatorSubsystem.moveElevatorCommand(() -> 0.0));
@@ -68,10 +69,11 @@ public class RobotContainer
         ));
 
 
-        NamedCommands.registerCommand("GoBackFastly", Commands.parallel(
+        NamedCommands.registerCommand("GoBackFastly", Commands.sequence(
+                Commands.waitSeconds(0.7),
                 Commands.run(
                         () -> {
-                            ChassisSpeeds speeds = new ChassisSpeeds(-0.4, 0, 0);
+                            ChassisSpeeds speeds = new ChassisSpeeds(-0.67, 0, 0);
                             swerveSubsystem.driveRelative(speeds);
                         }
                 ).withTimeout(1)
