@@ -167,6 +167,14 @@ object AutoAlign {
                     state = AutoAlignState.DONE
                     update()
                 }
+                if(target == null) {
+                    println("==LOSS OF TARGET==")
+                    xPidController.reset()
+                    ramPidController.reset()
+                    thetaPidController.reset()
+                    state = AutoAlignState.DONE
+                    update()
+                }
             }
             AutoAlignState.DONE -> {
                 if (k % 20 == 0L) println("AutoAlignState: Done")
